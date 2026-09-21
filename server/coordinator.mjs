@@ -332,6 +332,7 @@ export class SyncCoordinator {
       sourceCourseId: plan.source.course_id,
       targetCourseId,
       targetCreation: targetCourseId ? null : plan.target.creation,
+      mapping: plan.entity_mapping_snapshot ?? {},
       policies: { unsupported: plan.policies.unsupported, conflict: resolution }
     });
   }
