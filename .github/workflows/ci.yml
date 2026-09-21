@@ -27,6 +27,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
+      - name: Install preview Core dependency for MoodlIA
+        shell: bash
+        working-directory: dependencies/moodlia-cli
+        run: |
+          npm pkg set dependencies.moodle-core-cli="file:../moodle-core-cli"
+          npm install --ignore-scripts
       - name: Install preview dependencies
         shell: bash
         working-directory: coordinator
