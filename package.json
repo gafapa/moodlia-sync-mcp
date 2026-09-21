@@ -1,0 +1,40 @@
+{
+  "name": "moodlia-sync-mcp",
+  "version": "0.1.0",
+  "description": "Local MCP coordinator for policy-bound cross-site Moodle course synchronization.",
+  "type": "module",
+  "license": "GPL-3.0-or-later",
+  "author": "Pablo Gallego",
+  "bin": {
+    "moodlia-sync-mcp": "server/stdio.mjs",
+    "moodlia-sync-mcp-http": "server/http.mjs"
+  },
+  "exports": {
+    ".": "./server/coordinator.mjs",
+    "./mcp-server": "./server/mcp-server.mjs",
+    "./http": "./server/http.mjs"
+  },
+  "files": [
+    "server/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check server/coordinator.mjs && node --check server/mcp-server.mjs && node --check server/stdio.mjs && node --check server/http.mjs && npm test",
+    "pack:check": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "moodle-core-cli": "^0.3.0",
+    "moodlia": "^0.3.0",
+    "zod": "^4.6.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

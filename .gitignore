@@ -1,0 +1,6 @@
+node_modules/
+*.tgz
+.moodle-sync/
+.moodle-profiles.json
+.moodle-sync-policy.json
+.env

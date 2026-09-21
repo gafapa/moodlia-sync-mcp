@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22.5.0', '24']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: coordinator
+      - uses: actions/checkout@v4
+        with:
+          repository: gafapa/moodle-core-cli
+          path: dependencies/moodle-core-cli
+      - uses: actions/checkout@v4
+        with:
+          repository: gafapa/moodlia-cli
+          path: dependencies/moodlia-cli
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install preview dependencies
+        shell: bash
+        working-directory: coordinator
+        run: |
+          npm pkg set dependencies.moodle-core-cli="file:../dependencies/moodle-core-cli"
+          npm pkg set dependencies.moodlia="file:../dependencies/moodlia-cli"
+          npm install --ignore-scripts
+      - run: npm run check
+        working-directory: coordinator
+      - run: npm run pack:check
+        working-directory: coordinator
+      - run: npm audit --audit-level=high
+        working-directory: coordinator
