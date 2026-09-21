@@ -80,7 +80,7 @@ test('coordinator restart marks durable in-flight jobs as interrupted', async ()
 
 test('MCP apply consumes an exact external approval before execution', async () => {
   const unsignedPlan = {
-    schema_version: 1,
+    schema_version: 2,
     plan_id: 'plan-1',
     expires_at: new Date(Date.now() + 60_000).toISOString(),
     source: { site: { profile: 'source' }, course_id: 1 },
@@ -141,7 +141,7 @@ test('MCP schemas expose the complete durable synchronization lifecycle', async 
     const tools = await client.listTools();
     assert.deepEqual(tools.tools.map((tool) => tool.name).sort(), [
       'sync_apply_plan', 'sync_cancel_job', 'sync_discover_capabilities', 'sync_get_conflicts',
-      'sync_get_history', 'sync_get_job', 'sync_list_profiles', 'sync_plan_course',
+      'sync_get_history', 'sync_get_job', 'sync_get_plan', 'sync_list_profiles', 'sync_plan_course',
       'sync_resolve_conflict', 'sync_resume_job', 'sync_verify_course'
     ]);
     const result = await client.callTool({ name: 'sync_list_profiles', arguments: {} });
@@ -150,6 +150,37 @@ test('MCP schemas expose the complete durable synchronization lifecycle', async 
     await client.close();
     await server.close();
   }
+});
+
+test('plan retrieval is policy-scoped and paginated', () => {
+  const coordinator = Object.create(SyncCoordinator.prototype);
+  coordinator.policy = {
+    allowed_profiles: ['source', 'target'],
+    allowed_pairs: [{
+      source: 'source', target: 'target', source_courses: [1], target_courses: [2], effects: ['content.read']
+    }]
+  };
+  coordinator.store = {
+    getPlan() {
+      return {
+        schema_version: 2,
+        plan_id: 'plan-1',
+        digest: 'digest',
+        source: { site: { profile: 'source' }, course_id: 1 },
+        target: { site: { profile: 'target' }, course_id: 2 },
+        actions: [{ action_id: 'a' }, { action_id: 'b' }, { action_id: 'c' }],
+        unsupported: [{ reason: 'gap' }]
+      };
+    }
+  };
+
+  const page = coordinator.getPlan({ plan_id: 'plan-1', cursor: 1, limit: 1 });
+  assert.deepEqual(page.items, [{ action_id: 'b' }]);
+  assert.equal(page.next_cursor, 2);
+  assert.equal(page.total, 3);
+  const gaps = coordinator.getPlan({ plan_id: 'plan-1', section: 'unsupported' });
+  assert.equal(gaps.items[0].reason, 'gap');
+  assert.throws(() => coordinator.getPlan({ plan_id: 'plan-1', limit: 101 }), /1 to 100/);
 });
 
 test('HTTP transport protects MCP routes and leaves health credential-free', async () => {

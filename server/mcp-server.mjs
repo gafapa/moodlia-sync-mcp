@@ -30,6 +30,17 @@ export function createMcpServer(coordinator) {
     description: 'Queue an externally approved immutable plan.',
     inputSchema: { plan_id: z.string().min(1), plan_digest: z.string().min(1) }
   }, async (input) => jsonResult(coordinator.startPlan(input)));
+  server.registerTool('sync_get_plan', {
+    description: 'Read one authorized immutable plan section with bounded pagination.',
+    inputSchema: {
+      plan_id: z.string().min(1),
+      section: z.enum([
+        'actions', 'conflicts', 'divergences', 'unsupported', 'skipped', 'unchanged', 'unknown'
+      ]).optional(),
+      cursor: z.number().int().nonnegative().optional(),
+      limit: z.number().int().min(1).max(100).optional()
+    }
+  }, async (input) => jsonResult(coordinator.getPlan(input)));
   server.registerTool('sync_get_job', {
     description: 'Read a synchronization job and its verification status.',
     inputSchema: { job_id: z.string().min(1) }

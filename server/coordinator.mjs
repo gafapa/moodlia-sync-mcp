@@ -250,6 +250,52 @@ export class SyncCoordinator {
     return this.store.listJobs();
   }
 
+  getPlan({ plan_id: planId, section = 'actions', cursor = 0, limit = 50 }) {
+    const plan = this.store.getPlan(planId);
+    if (!plan) throw new TypeError(`Unknown sync plan: ${planId}.`);
+    this.pairPolicy(
+      plan.source.site.profile,
+      plan.target.site.profile,
+      plan.source.course_id,
+      plan.target.course_id,
+      'content.read',
+      plan.target.creation?.category_id ?? null
+    );
+    const collections = {
+      actions: plan.actions ?? [],
+      conflicts: plan.conflicts ?? [],
+      divergences: plan.divergences ?? [],
+      unsupported: plan.unsupported ?? [],
+      skipped: plan.skipped ?? [],
+      unchanged: plan.unchanged ?? [],
+      unknown: plan.unknown ?? []
+    };
+    if (!Object.hasOwn(collections, section)) throw new TypeError(`Unknown plan section: ${section}.`);
+    if (!Number.isInteger(cursor) || cursor < 0) throw new TypeError('cursor must be a non-negative integer.');
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+      throw new TypeError('limit must be an integer from 1 to 100.');
+    }
+    const collection = collections[section];
+    const items = collection.slice(cursor, cursor + limit);
+    const nextCursor = cursor + items.length < collection.length ? cursor + items.length : null;
+    return {
+      plan_id: plan.plan_id,
+      digest: plan.digest,
+      schema_version: plan.schema_version,
+      created_at: plan.created_at,
+      expires_at: plan.expires_at,
+      applicable: plan.applicable,
+      action_summary: plan.action_summary,
+      policies: plan.policies,
+      section,
+      cursor,
+      limit,
+      total: collection.length,
+      next_cursor: nextCursor,
+      items
+    };
+  }
+
   getConflicts(planId) {
     const plan = this.store.getPlan(planId);
     if (!plan) throw new TypeError(`Unknown sync plan: ${planId}.`);

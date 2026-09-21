@@ -80,6 +80,7 @@ Approval is bound to the complete plan digest, expires with the plan, and is con
 - `sync_list_profiles`
 - `sync_discover_capabilities`
 - `sync_plan_course`
+- `sync_get_plan` (bounded pagination across actions, conflicts, gaps, unchanged, and unknown entries)
 - `sync_apply_plan`
 - `sync_get_job`
 - `sync_cancel_job`
