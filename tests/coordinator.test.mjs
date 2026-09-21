@@ -131,6 +131,31 @@ test('coordinator exposes only policy-authorized plan conflicts', () => {
   });
 });
 
+test('course planning preserves advanced actions from the shared engine', async () => {
+  const coordinator = Object.create(SyncCoordinator.prototype);
+  coordinator.pairPolicy = () => ({});
+  coordinator.adapter = (name) => ({ profile: name });
+  const advancedAction = {
+    action_id: 'grade-action',
+    kind: 'grade_item.update',
+    module_source_key: 'module:20',
+    fields: { grade_pass: 50 }
+  };
+  coordinator.engine = {
+    async plan(input) {
+      assert.equal(input.sourceAdapter.profile, 'source');
+      assert.equal(input.targetAdapter.profile, 'target');
+      return { schema_version: 2, actions: [advancedAction] };
+    }
+  };
+
+  const plan = await coordinator.planCourse({
+    source_profile: 'source', source_course_id: 1,
+    target_profile: 'target', target_course_id: 2
+  });
+  assert.deepEqual(plan.actions, [advancedAction]);
+});
+
 test('MCP schemas expose the complete durable synchronization lifecycle', async () => {
   const coordinator = { listProfiles: () => [] };
   const server = createMcpServer(coordinator);

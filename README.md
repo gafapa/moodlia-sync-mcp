@@ -9,7 +9,7 @@ The coordinator does not send Moodle tokens or binary files through MCP tool arg
 
 ## Status
 
-The current preview synchronizes verified course metadata, hidden target-course creation, sections through MoodlIA, groups and grouping membership, Pages/Labels/URLs on creation, file resources and folders on creation, Books with chapter files, selected assignment definitions and new rubrics, and new Workshop grading forms. Existing unsupported authoring changes and unsafe transformations are reported before writing. It does not use Moodle backup files.
+The current preview synchronizes verified course metadata, hidden target-course creation, sections, groups and grouping membership, portable Pages/Labels/URLs, file resources and folders, Books with chapter files, selected assignment definitions and grading forms, Workshop forms, supported question banks and Quiz slots, portable Lesson pages, Database fields, Feedback items, course-completion criteria, and selected gradebook configuration. The coordinator uses the same engine and adaptive adapters as the CLI, so provider selection and advanced action semantics are identical. Existing unsupported authoring changes and unsafe transformations are reported before writing. It does not use Moodle backup files.
 
 ## Configuration
 
