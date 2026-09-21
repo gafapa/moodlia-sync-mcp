@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
@@ -174,6 +175,18 @@ test('MCP schemas expose the complete durable synchronization lifecycle', async 
   } finally {
     await client.close();
     await server.close();
+  }
+});
+
+test('packaged executables show help without configuration or credentials', () => {
+  for (const entrypoint of ['stdio.mjs', 'http.mjs']) {
+    const result = spawnSync(process.execPath, [path.resolve('server', entrypoint), '--help'], {
+      encoding: 'utf8',
+      env: {}
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /Usage: moodlia-sync-mcp/);
+    assert.doesNotMatch(result.stderr, /MOODLIA_SYNC_CONFIG is required/);
   }
 });
 

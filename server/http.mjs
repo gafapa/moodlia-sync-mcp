@@ -13,6 +13,10 @@ function requiredEnvironment(environment, name) {
   return value;
 }
 
+function printHelp() {
+  process.stdout.write(`Usage: moodlia-sync-mcp-http\n\nEnvironment:\n  MOODLIA_SYNC_CONFIG          Profile configuration JSON path (required)\n  MOODLIA_SYNC_POLICY          Coordinator policy JSON path (required)\n  MOODLIA_SYNC_BEARER_TOKEN    MCP bearer token of at least 32 bytes (required)\n  MOODLIA_SYNC_STATE           SQLite state path\n  MOODLIA_SYNC_HOST            Listen host (default: 127.0.0.1)\n  MOODLIA_SYNC_PORT            Listen port (default: 3333)\n  MOODLIA_SYNC_ALLOWED_HOSTS   Comma-separated Host allowlist\n`);
+}
+
 export function tokenMatches(header, expected) {
   const supplied = Buffer.from(String(header ?? '').replace(/^Bearer\s+/i, ''));
   const wanted = Buffer.from(expected);
@@ -98,6 +102,10 @@ export function startHttpServer(environment = process.env) {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (process.argv.slice(2).some((argument) => argument === '--help' || argument === '-h')) {
+    printHelp();
+    process.exit(0);
+  }
   const runtime = startHttpServer();
   for (const signal of ['SIGINT', 'SIGTERM']) {
     process.once(signal, async () => {

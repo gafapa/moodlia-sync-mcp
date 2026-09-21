@@ -9,6 +9,15 @@ function requiredEnvironment(name) {
   return value;
 }
 
+function printHelp() {
+  process.stdout.write(`Usage: moodlia-sync-mcp\n\nEnvironment:\n  MOODLIA_SYNC_CONFIG   Profile configuration JSON path (required)\n  MOODLIA_SYNC_POLICY   Coordinator policy JSON path (required)\n  MOODLIA_SYNC_STATE    SQLite state path (default: .moodle-sync/coordinator.sqlite)\n`);
+}
+
+if (process.argv.slice(2).some((argument) => argument === '--help' || argument === '-h')) {
+  printHelp();
+  process.exit(0);
+}
+
 const coordinator = createSyncCoordinator({
   configPath: requiredEnvironment('MOODLIA_SYNC_CONFIG'),
   policyPath: requiredEnvironment('MOODLIA_SYNC_POLICY'),
