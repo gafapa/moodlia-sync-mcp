@@ -2,6 +2,9 @@
 
 `moodlia-sync-mcp` is an MCP coordinator for one-way course-content synchronization between Moodle sites. Each endpoint may use Moodle Core web services, the MoodlIA plugin, or both. Provider selection is capability-based and is frozen into every approved action.
 
+It requires Node.js 22.13 or later because its durable state store uses the
+built-in SQLite API without experimental process flags.
+
 The coordinator does not send Moodle tokens or binary files through MCP tool arguments or results. Profiles reference environment variables, and an allowlist restricts profile pairs, course IDs, and effects.
 
 ## Status

@@ -25,7 +25,7 @@
     "pack:check": "npm pack --dry-run"
   },
   "engines": {
-    "node": ">=22.5"
+    "node": ">=22.13"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
