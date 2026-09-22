@@ -1,6 +1,6 @@
 {
   "name": "moodlia-sync-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local MCP coordinator for policy-bound cross-site Moodle course synchronization.",
   "type": "module",
   "license": "GPL-3.0-or-later",
@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
-    "moodle-core-cli": "^0.3.0",
-    "moodlia": "^0.3.0",
+    "moodle-core-cli": "^0.3.6",
+    "moodlia": "^0.3.7",
     "zod": "^4.6.5"
   },
   "publishConfig": {
