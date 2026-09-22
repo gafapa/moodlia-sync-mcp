@@ -30,7 +30,9 @@ jobs:
       - name: Install Core package dependencies
         shell: bash
         working-directory: dependencies/moodle-core-cli
-        run: npm ci --ignore-scripts
+        # Allow install scripts so the native SQLite state store used by the
+        # coordinator tests is compiled for the preview Core checkout.
+        run: npm ci
       - name: Install preview Core dependency for MoodlIA
         shell: bash
         working-directory: dependencies/moodlia-cli
