@@ -1,7 +1,7 @@
 {
   "name": "moodlia-sync-mcp",
-  "version": "0.1.1",
-  "description": "Local MCP coordinator for policy-bound cross-site Moodle course synchronization.",
+  "version": "0.1.2",
+  "description": "Deprecated: use the moodlia-sync CLI. MCP coordinator for Moodle course synchronization.",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "author": "Pablo Gallego",

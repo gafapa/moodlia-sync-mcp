@@ -1,4 +1,17 @@
-# MoodlIA Sync MCP
+# MoodlIA Sync MCP (deprecated)
+
+> **Deprecated.** This coordinator is replaced by the [`moodlia-sync`](https://www.npmjs.com/package/moodlia-sync) CLI and receives no further updates. Its approval boundary did not protect against agents with shell access, which can run the same CLI; `moodlia-sync` keeps the approval model by consuming an approval of the exact plan digest atomically on every `apply` and `resume`.
+>
+> | MCP tool | `moodlia-sync` command |
+> | --- | --- |
+> | `sync_list_profiles`, `sync_discover_capabilities` | `capabilities --profile <name>` |
+> | `sync_plan_course` | `plan --source-profile ... --plan-file plan.json` |
+> | external approval + `sync_apply_plan` | `approve plan.json --yes`, then `apply plan.json --plan-digest <d> --allow-write` |
+> | `sync_get_plan`, `sync_get_conflicts`, `sync_resolve_conflict` | `conflicts plan.json [--resolve source-wins|target-wins]` |
+> | `sync_get_job`, `sync_get_history`, `sync_cancel_job` | `status`, `history`, `cancel` |
+> | `sync_resume_job`, `sync_verify_course` | `resume ... --approve --yes`, `verify --plan-id <id>` |
+>
+> Existing state databases open unchanged in `moodlia-sync`.
 
 `moodlia-sync-mcp` is an MCP coordinator for one-way course-content synchronization between Moodle sites. Each endpoint may use Moodle Core web services, the MoodlIA plugin, or both. Provider selection is capability-based and is frozen into every approved action.
 
