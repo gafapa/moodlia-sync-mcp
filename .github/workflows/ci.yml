@@ -13,39 +13,18 @@ jobs:
         node: ['22.13.0', '24']
     runs-on: ${{ matrix.os }}
     steps:
+      # Deprecated: test against the published Core 0.3.x and MoodlIA 0.3.x it depends on.
+      # The sibling repositories no longer contain the synchronization engine.
       - uses: actions/checkout@v4
         with:
           path: coordinator
-      - uses: actions/checkout@v4
-        with:
-          repository: gafapa/moodle-core-cli
-          path: dependencies/moodle-core-cli
-      - uses: actions/checkout@v4
-        with:
-          repository: gafapa/moodlia-cli
-          path: dependencies/moodlia-cli
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Install Core package dependencies
-        shell: bash
-        working-directory: dependencies/moodle-core-cli
-        # Allow install scripts so the native SQLite state store used by the
-        # coordinator tests is compiled for the preview Core checkout.
-        run: npm ci
-      - name: Install preview Core dependency for MoodlIA
-        shell: bash
-        working-directory: dependencies/moodlia-cli
-        run: |
-          npm pkg set dependencies.moodle-core-cli="file:../moodle-core-cli"
-          npm install --ignore-scripts
-      - name: Install preview dependencies
+      - name: Install published dependencies
         shell: bash
         working-directory: coordinator
-        run: |
-          npm pkg set dependencies.moodle-core-cli="file:../dependencies/moodle-core-cli"
-          npm pkg set dependencies.moodlia="file:../dependencies/moodlia-cli"
-          npm install --ignore-scripts
+        run: npm ci
       - run: npm run check
         working-directory: coordinator
       - run: npm run pack:check
